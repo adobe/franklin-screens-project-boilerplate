@@ -50,7 +50,7 @@ export default async function decorate(block) {
 
       const imageEle = document.createElement('div');
       imageEle.className = 'image';
-      const pictureEle = createOptimizedPicture(item.image, '', false, [{ width: '70' }]);
+      const pictureEle = createOptimizedPicture(item.image, '', false, [{ width: '120' }]);
       imageEle.appendChild(pictureEle);
 
       itemEle.appendChild(nameDescEle);

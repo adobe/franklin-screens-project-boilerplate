@@ -7,7 +7,7 @@
 }
 
 #menutable-container .title-contact {
-  padding-top: 1.4%;
+  padding-top: 1.2%;
   color: #DE981F;
   width: 100%;
 }
@@ -58,10 +58,10 @@
 #menutable-container .menu-items-container .item {
   display: flex;
   flex-direction: row;
-  padding-top: 1.5%;
 }
 
 #menutable-container .menu-items-container .item .name-desc {
+  padding-top: 2%;
   width: 20%;
   display: flex;
   flex-direction: column;
@@ -86,22 +86,25 @@
   color: #FFF;
 }
 
+#menutable-container .menu-items-container .item .image > img {
+  padding-bottom: 5%;
+}
+
 #menutable-container .menu-items-container .item .price-container {
   width: 20%;
 }
 
 #menutable-container .menu-items-container .item .price {
+  padding-top: 11%;
   font-family: poppins, sans-serif;
   font-weight: 700;
   font-style: normal;
   font-size: 25px;
   color: #DE981F;
-  padding-top: 8%;
   padding-right: 30%;
 }
 
 #menutable-container .qrcode-container {
-  padding-top: 2%;
   display: flex;
   flex-direction: column;
 }
@@ -112,9 +115,9 @@
   font-style: normal;
   font-size: 20px;
   color: #DE981F;
-  padding-left: 25%;
+  padding-left: 26%;
 }
 
 #menutable-container .qrcode-container .qrcode {
-  padding-left: 60%;
+  padding-left: 60.5%;
 }
