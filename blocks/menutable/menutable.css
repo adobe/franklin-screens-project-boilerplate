@@ -1,0 +1,123 @@
+@import url("https://use.typekit.net/crs7noz.css");
+
+#menutable-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+#menutable-container .title-contact {
+  padding-top: 1.2%;
+  color: #DE981F;
+  width: 100%;
+}
+
+#menutable-container .title-contact .title {
+  text-align: left;
+  padding-left: 33.1%;
+  float: left;
+  width: 10%;
+  display: inline-block;
+}
+
+#menutable-container .title-contact .contact {
+  padding-top: 2.5%;
+  padding-right: 33.3%;
+  width: 15%;
+  display: inline-block;
+  float: right;
+}
+
+#menutable-container .title-contact .contact > div {
+  text-align: right;
+  font-family: poppins, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+}
+
+#menutable-container .title h2 {
+  font-family: bungee, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 40px;
+}
+
+#menutable-container .menu-title {
+  font-family: cabin-sketch-bold, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 65px;
+  color: #FFF;
+}
+
+#menutable-container .menu-items-container {
+  padding-left: 33%;
+}
+
+#menutable-container .menu-items-container .item {
+  display: flex;
+  flex-direction: row;
+}
+
+#menutable-container .menu-items-container .item .name-desc {
+  padding-top: 2%;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+}
+
+#menutable-container .menu-items-container .item .name {
+  font-family: poppins, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 25px;
+  color: #DE981F;
+  width: 100%;
+  text-align: left;
+}
+
+#menutable-container .menu-items-container .item .description {
+  text-align: left;
+  font-family: poppins, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 12px;
+  color: #FFF;
+}
+
+#menutable-container .menu-items-container .item .image > img {
+  padding-bottom: 5%;
+}
+
+#menutable-container .menu-items-container .item .price-container {
+  width: 20%;
+}
+
+#menutable-container .menu-items-container .item .price {
+  padding-top: 11%;
+  font-family: poppins, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 25px;
+  color: #DE981F;
+  padding-right: 30%;
+}
+
+#menutable-container .qrcode-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#menutable-container .qrcode-container .qrcode-title {
+  font-family: poppins, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 20px;
+  color: #DE981F;
+  padding-left: 26%;
+}
+
+#menutable-container .qrcode-container .qrcode {
+  padding-left: 60.5%;
+}
