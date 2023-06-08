@@ -1,6 +1,57 @@
 import { createOptimizedPicture, getMetadata } from '../../scripts/lib-franklin.js';
 
 export default async function decorate(block) {
+  const fetchData = async (url) => {
+    let result = '';
+    try {
+      result = fetch(url)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`request to fetch ${url} failed with status code ${response.status}`);
+          }
+          return response.text();
+        });
+      return Promise.resolve(result);
+    } catch (e) {
+      throw new Error(`request to fetch ${url} failed with status code with error ${e}`);
+    }
+  };
+
+  const getMenuItemsFromPOS = async () => {
+    const linkPath = getMetadata('product-data-source');
+    const docUrl = new URL(document.URL);
+    const sheetLink = docUrl.origin + linkPath;
+    const items = [];
+    try {
+      const sheetDataResponse = JSON.parse(await fetchData(sheetLink));
+      if (!sheetDataResponse) {
+        console.warn(`Invalid sheet Link ${sheetLink}.Skipping processing this one.`);
+      }
+      let sheetData = '';
+      if (sheetDataResponse[':type'] === 'sheet') {
+        sheetData = sheetDataResponse.data;
+      } else {
+        throw new Error(`Invalid sheet type: ${sheetDataResponse[':type']}`);
+      }
+      return sheetData;
+    } catch (err) {
+      console.warn(`Error while processing sheet ${sheetLink}`, err);
+    }
+    return items;
+  };
+
+  const updatePlaceholder = (content, assetDetails) => {
+    const keys = Object.keys(assetDetails);
+    let result = content;
+    keys.forEach((key) => {
+      const placeholder = `{${key}}`;
+      if (content.includes(placeholder)) {
+        result = result.replace(placeholder, assetDetails[key]);
+      }
+    });
+    return result;
+  };
+
   const parseMenuItems = () => {
     const columns = block.children;
     const items = [];
@@ -16,11 +67,13 @@ export default async function decorate(block) {
     return items;
   };
 
-  const getMenuItems = () => {
+  const getMenuItems = async () => {
     const items = parseMenuItems();
+    const posItems = await getMenuItemsFromPOS();
     const menuItemsContainer = document.createElement('div');
     menuItemsContainer.className = 'menu-items-container';
 
+    let i = 0;
     items.forEach((item) => {
       const itemEle = document.createElement('div');
       itemEle.className = 'item';
@@ -29,11 +82,12 @@ export default async function decorate(block) {
       nameDescEle.className = 'name-desc';
 
       const nameEle = document.createElement('div');
-      nameEle.textContent = item.name;
+      nameEle.textContent = posItems[i] ? updatePlaceholder(item.name, posItems[i]) : item.name;
       nameEle.className = 'name';
 
       const descEle = document.createElement('div');
-      descEle.textContent = item.description;
+      descEle.textContent = posItems[i] ? updatePlaceholder(item.description, posItems[i])
+        : item.description;
       descEle.className = 'description';
 
       nameDescEle.appendChild(nameEle);
@@ -42,7 +96,7 @@ export default async function decorate(block) {
       const priceContainer = document.createElement('div');
       priceContainer.className = 'price-container';
       const priceEle = document.createElement('div');
-      priceEle.textContent = `$${item.price}`;
+      priceEle.textContent = posItems[i] ? updatePlaceholder(item.price, posItems[i]) : item.price;
       priceEle.className = 'price';
       priceContainer.className = 'price-container';
 
@@ -58,6 +112,7 @@ export default async function decorate(block) {
       itemEle.appendChild(imageEle);
 
       menuItemsContainer.appendChild(itemEle);
+      i += 1;
     });
 
     return menuItemsContainer;
@@ -77,7 +132,7 @@ export default async function decorate(block) {
     document.head.appendChild(script);
   };
 
-  const generateMenuTable = () => {
+  const generateMenuTable = async () => {
     const title = getMetadata('og:title');
     const contacts = getMetadata('contact').split(',');
     const menuTitle = getMetadata('menu-title');
@@ -108,7 +163,7 @@ export default async function decorate(block) {
     menuTitleElement.className = 'menu-title';
     menuTableContainer.appendChild(menuTitleElement);
 
-    const menuItemsContainer = getMenuItems();
+    const menuItemsContainer = await getMenuItems();
     menuTableContainer.appendChild(menuItemsContainer);
 
     const QRCodeContainer = document.createElement('div');
@@ -133,5 +188,5 @@ export default async function decorate(block) {
   document.body.style.backgroundRepeat = 'no-repeat';
   document.body.style.backgroundPosition = 'center top';
   main.parentNode.insertBefore(menuTableContainer, main);
-  generateMenuTable();
+  await generateMenuTable();
 }

@@ -18,5 +18,6 @@ module.exports = {
       js: 'always',
     }],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    'no-console': 'off'
   },
 };

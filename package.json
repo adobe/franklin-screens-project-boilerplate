@@ -1,8 +1,8 @@
 {
-  "name": "@adobe/helix-project-boilerplate",
+  "name": "@adobe/franklin-screens-project-boilerplate",
   "private": true,
   "version": "1.0.0",
-  "description": "Starter project for Adobe Helix",
+  "description": "Starter project for Adobe Screens Franklin",
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
