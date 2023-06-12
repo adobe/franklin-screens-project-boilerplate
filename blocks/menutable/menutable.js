@@ -21,32 +21,48 @@ export default async function decorate(block) {
     const linkPath = getMetadata('product-data-source');
     const docUrl = new URL(document.URL);
     const sheetLink = docUrl.origin + linkPath;
-    const items = [];
+    const itemsMap = new Map();
     try {
       const sheetDataResponse = JSON.parse(await fetchData(sheetLink));
       if (!sheetDataResponse) {
         console.warn(`Invalid sheet Link ${sheetLink}.Skipping processing this one.`);
       }
-      let sheetData = '';
       if (sheetDataResponse[':type'] === 'sheet') {
-        sheetData = sheetDataResponse.data;
+        const sheetData = sheetDataResponse.data;
+        for (let row = 0; row < sheetData.length; row++) {
+          const itemDetails = sheetData[row];
+          const id = itemDetails.Id;
+          itemsMap.set(id, itemDetails);
+        }
       } else {
         throw new Error(`Invalid sheet type: ${sheetDataResponse[':type']}`);
       }
-      return sheetData;
     } catch (err) {
       console.warn(`Error while processing sheet ${sheetLink}`, err);
     }
-    return items;
+    return itemsMap;
   };
 
-  const updatePlaceholder = (content, assetDetails) => {
-    const keys = Object.keys(assetDetails);
+  const getSkuId = (content) => {
+    if (content.includes('{{SKU') && content.includes('}}')
+        && content.indexOf('{{') < content.indexOf('}}')) {
+      return content.substring(content.indexOf('{{SKU') + 5, content.indexOf('.'));
+    }
+    return '';
+  };
+
+  const updatePlaceholder = (content, posItems) => {
     let result = content;
+    const skuId = getSkuId(content);
+    if (!posItems.has(skuId)) {
+      return content;
+    }
+    const posItem = posItems.get(skuId);
+    const keys = Object.keys(posItem);
     keys.forEach((key) => {
-      const placeholder = `{${key}}`;
+      const placeholder = `{{SKU${skuId}.${key}}}`;
       if (content.includes(placeholder)) {
-        result = result.replace(placeholder, assetDetails[key]);
+        result = result.replace(placeholder, posItem[key]);
       }
     });
     return result;
@@ -73,7 +89,6 @@ export default async function decorate(block) {
     const menuItemsContainer = document.createElement('div');
     menuItemsContainer.className = 'menu-items-container';
 
-    let i = 0;
     items.forEach((item) => {
       const itemEle = document.createElement('div');
       itemEle.className = 'item';
@@ -82,12 +97,11 @@ export default async function decorate(block) {
       nameDescEle.className = 'name-desc';
 
       const nameEle = document.createElement('div');
-      nameEle.textContent = posItems[i] ? updatePlaceholder(item.name, posItems[i]) : item.name;
+      nameEle.textContent = updatePlaceholder(item.name, posItems);
       nameEle.className = 'name';
 
       const descEle = document.createElement('div');
-      descEle.textContent = posItems[i] ? updatePlaceholder(item.description, posItems[i])
-        : item.description;
+      descEle.textContent = updatePlaceholder(item.description, posItems);
       descEle.className = 'description';
 
       nameDescEle.appendChild(nameEle);
@@ -96,7 +110,7 @@ export default async function decorate(block) {
       const priceContainer = document.createElement('div');
       priceContainer.className = 'price-container';
       const priceEle = document.createElement('div');
-      priceEle.textContent = posItems[i] ? updatePlaceholder(item.price, posItems[i]) : item.price;
+      priceEle.textContent = updatePlaceholder(item.price, posItems);
       priceEle.className = 'price';
       priceContainer.className = 'price-container';
 
@@ -112,7 +126,6 @@ export default async function decorate(block) {
       itemEle.appendChild(imageEle);
 
       menuItemsContainer.appendChild(itemEle);
-      i += 1;
     });
 
     return menuItemsContainer;
